@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import SearchBar from '@/components/SearchBar';
 import SearchResults from '@/components/SearchResults';
@@ -71,26 +70,10 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center">
-              <h1 className="text-2xl font-bold text-gray-900">AI Search Engine</h1>
-            </div>
-            {hasSearched && (
-              <div className="flex-1 max-w-2xl mx-8">
-                <SearchBar onSearch={handleSearch} isLoading={isLoading} />
-              </div>
-            )}
-          </div>
-        </div>
-      </header>
-
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {!hasSearched ? (
           // Landing page view
-          <div className="flex flex-col items-center justify-center min-h-[calc(100vh-4rem)]">
+          <div className="flex flex-col items-center justify-center min-h-screen">
             <div className="text-center mb-12">
               <h1 className="text-6xl font-bold text-gray-900 mb-4 tracking-tight">
                 AI Search Engine
@@ -104,6 +87,9 @@ const Index = () => {
         ) : (
           // Results page view
           <div className="py-8">
+            <div className="max-w-2xl mx-auto mb-8">
+              <SearchBar onSearch={handleSearch} isLoading={isLoading} />
+            </div>
             <SearchResults 
               results={searchResults} 
               query={currentQuery} 
