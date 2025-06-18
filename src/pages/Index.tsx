@@ -76,7 +76,7 @@ const Index = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center">
-              <h1 className="text-2xl font-bold text-gray-900">Search</h1>
+              <h1 className="text-2xl font-bold text-gray-900">AI Search Engine</h1>
             </div>
             {hasSearched && (
               <div className="flex-1 max-w-2xl mx-8">
@@ -93,10 +93,10 @@ const Index = () => {
           <div className="flex flex-col items-center justify-center min-h-[calc(100vh-4rem)]">
             <div className="text-center mb-12">
               <h1 className="text-6xl font-bold text-gray-900 mb-4 tracking-tight">
-                Search
+                AI Search Engine
               </h1>
               <p className="text-xl text-gray-600">
-                Find what you're looking for across the web
+                Find what you're looking for across the web with AI
               </p>
             </div>
             <SearchBar onSearch={handleSearch} isLoading={isLoading} />
@@ -118,7 +118,7 @@ const Index = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-center h-16">
             <p className="text-sm text-gray-500">
-              © 2024 Search Engine. Built with modern web technologies.
+              © 2024 AI Search Engine. Built with modern web technologies.
             </p>
           </div>
         </div>
