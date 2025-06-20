@@ -113,7 +113,7 @@
   /* Card hover animations */
   .card-animate {
     @apply transition-all duration-300 ease-in-out;
-    @apply hover:scale-102 hover:shadow-xl;
+    @apply hover:scale-105 hover:shadow-xl;
     @apply hover:-translate-y-1;
   }
 
