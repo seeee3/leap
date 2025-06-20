@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import SearchBar from '@/components/SearchBar';
 import SearchResults from '@/components/SearchResults';
@@ -86,7 +85,7 @@ const Index = () => {
         {!hasSearched ? (
           // Landing page view
           <div className="flex flex-col items-center justify-center min-h-screen relative">
-            <div className="text-center mb-12">
+            <div className="text-center mb-12 fade-in">
               <h1 className="text-6xl font-bold bg-gradient-to-r from-violet-400 via-purple-400 to-indigo-400 bg-clip-text text-transparent mb-4 tracking-tight">
                 AI Search Engine
               </h1>
@@ -97,7 +96,7 @@ const Index = () => {
             <SearchBar onSearch={handleSearch} isLoading={isLoading} />
             
             {/* Popular Search Cards Overlay */}
-            <div className="mt-16 w-full max-w-4xl">
+            <div className="mt-16 w-full max-w-4xl fade-in">
               <h3 className="text-lg font-medium text-slate-300 text-center mb-6">
                 Popular Searches
               </h3>
@@ -105,7 +104,7 @@ const Index = () => {
                 {popularSearches.map((search, index) => (
                   <Card 
                     key={index}
-                    className="bg-slate-800/40 border-slate-700/50 hover:border-violet-500/50 transition-all duration-200 cursor-pointer backdrop-blur-sm hover:bg-slate-800/60"
+                    className="card-animate glow-hover bg-slate-800/40 border-slate-700/50 hover:border-violet-500/50 transition-all duration-200 cursor-pointer backdrop-blur-sm hover:bg-slate-800/60"
                     onClick={() => handleSearch(search)}
                   >
                     <CardContent className="p-4 text-center">
