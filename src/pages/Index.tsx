@@ -80,13 +80,13 @@ const Index = () => {
   const hasSearched = currentQuery.length > 0;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900">
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {!hasSearched ? (
           // Landing page view
           <div className="flex flex-col items-center justify-center min-h-screen relative">
             <div className="text-center mb-12 fade-in">
-              <h1 className="text-6xl font-bold bg-gradient-to-r from-violet-400 via-purple-400 to-indigo-400 bg-clip-text text-transparent mb-4 tracking-tight">
+              <h1 className="text-6xl font-bold bg-gradient-to-r from-cyan-400 via-blue-400 to-teal-400 bg-clip-text text-transparent mb-4 tracking-tight">
                 AI Search Engine
               </h1>
               <p className="text-xl text-slate-300">
@@ -104,7 +104,7 @@ const Index = () => {
                 {popularSearches.map((search, index) => (
                   <Card 
                     key={index}
-                    className="card-animate glow-hover bg-slate-800/40 border-slate-700/50 hover:border-violet-500/50 transition-all duration-200 cursor-pointer backdrop-blur-sm hover:bg-slate-800/60"
+                    className="card-animate glow-hover bg-slate-800/40 border-slate-700/50 hover:border-cyan-500/50 transition-all duration-200 cursor-pointer backdrop-blur-sm hover:bg-slate-800/60"
                     onClick={() => handleSearch(search)}
                   >
                     <CardContent className="p-4 text-center">

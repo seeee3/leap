@@ -52,14 +52,14 @@ const SearchResults = ({ results, query, isLoading }: SearchResultsProps) => {
       </div>
       <div className="space-y-6">
         {results.map((result) => (
-          <div key={result.id} className="group bg-slate-800/30 p-4 rounded-lg border border-slate-700/50 hover:border-violet-500/50 transition-all duration-200 backdrop-blur-sm">
+          <div key={result.id} className="group bg-slate-800/30 p-4 rounded-lg border border-slate-700/50 hover:border-cyan-500/50 transition-all duration-200 backdrop-blur-sm">
             <div className="flex items-start space-x-2">
               <div className="flex-1">
                 <div className="flex items-center space-x-2 mb-1">
                   <span className="text-sm text-slate-500">{result.domain}</span>
                   <ExternalLink className="h-3 w-3 text-slate-500" />
                 </div>
-                <h3 className="text-xl text-violet-400 hover:text-violet-300 cursor-pointer group-hover:underline font-medium mb-1">
+                <h3 className="text-xl text-cyan-400 hover:text-cyan-300 cursor-pointer group-hover:underline font-medium mb-1">
                   {result.title}
                 </h3>
                 <p className="text-slate-300 text-sm leading-relaxed">
