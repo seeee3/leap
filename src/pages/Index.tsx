@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import SearchBar from '@/components/SearchBar';
 import SearchResults from '@/components/SearchResults';
+import { Card, CardContent } from '@/components/ui/card';
 
 interface SearchResult {
   id: string;
@@ -15,6 +16,16 @@ const Index = () => {
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [currentQuery, setCurrentQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  // Popular search topics
+  const popularSearches = [
+    'Deep Learning',
+    'Machine Learning', 
+    'Hugging Face',
+    'Neural Networks',
+    'Computer Vision',
+    'Natural Language Processing'
+  ];
 
   // Mock search function - in a real app, this would call an API
   const handleSearch = async (query: string) => {
@@ -70,11 +81,11 @@ const Index = () => {
   const hasSearched = currentQuery.length > 0;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950">
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {!hasSearched ? (
           // Landing page view
-          <div className="flex flex-col items-center justify-center min-h-screen">
+          <div className="flex flex-col items-center justify-center min-h-screen relative">
             <div className="text-center mb-12">
               <h1 className="text-6xl font-bold bg-gradient-to-r from-violet-400 via-purple-400 to-indigo-400 bg-clip-text text-transparent mb-4 tracking-tight">
                 AI Search Engine
@@ -84,6 +95,28 @@ const Index = () => {
               </p>
             </div>
             <SearchBar onSearch={handleSearch} isLoading={isLoading} />
+            
+            {/* Popular Search Cards Overlay */}
+            <div className="mt-16 w-full max-w-4xl">
+              <h3 className="text-lg font-medium text-slate-300 text-center mb-6">
+                Popular Searches
+              </h3>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {popularSearches.map((search, index) => (
+                  <Card 
+                    key={index}
+                    className="bg-slate-800/40 border-slate-700/50 hover:border-violet-500/50 transition-all duration-200 cursor-pointer backdrop-blur-sm hover:bg-slate-800/60"
+                    onClick={() => handleSearch(search)}
+                  >
+                    <CardContent className="p-4 text-center">
+                      <span className="text-slate-200 font-medium text-sm">
+                        {search}
+                      </span>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
           </div>
         ) : (
           // Results page view
