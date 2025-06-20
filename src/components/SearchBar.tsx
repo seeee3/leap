@@ -26,13 +26,13 @@ const SearchBar = ({ onSearch, isLoading = false }: SearchBarProps) => {
     <div className="w-full max-w-2xl mx-auto">
       <form onSubmit={handleSubmit} className="relative group">
         <div className="relative flex items-center">
-          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5 group-focus-within:text-blue-500 transition-colors duration-200" />
+          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 h-5 w-5 group-focus-within:text-violet-400 transition-colors duration-200" />
           <input
             type="text"
             value={query}
             onChange={handleInputChange}
             placeholder="Search the web..."
-            className="w-full pl-12 pr-4 py-4 text-lg border border-gray-200 rounded-full shadow-sm hover:shadow-md focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white"
+            className="w-full pl-12 pr-4 py-4 text-lg border border-slate-700 bg-slate-800/50 text-slate-100 placeholder-slate-400 rounded-full shadow-lg hover:shadow-xl focus:shadow-2xl focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500 transition-all duration-200 backdrop-blur-sm"
             disabled={isLoading}
           />
         </div>
@@ -40,7 +40,7 @@ const SearchBar = ({ onSearch, isLoading = false }: SearchBarProps) => {
           <Button
             type="submit"
             variant="outline"
-            className="px-6 py-2 rounded-md hover:shadow-sm transition-shadow duration-200"
+            className="px-6 py-2 bg-gradient-to-r from-violet-600 to-purple-600 text-white border-violet-500 hover:from-violet-700 hover:to-purple-700 hover:shadow-lg transition-all duration-200 rounded-md"
             disabled={isLoading || !query.trim()}
           >
             Search
@@ -48,7 +48,7 @@ const SearchBar = ({ onSearch, isLoading = false }: SearchBarProps) => {
           <Button
             type="button"
             variant="outline"
-            className="px-6 py-2 rounded-md hover:shadow-sm transition-shadow duration-200"
+            className="px-6 py-2 bg-slate-800 text-slate-300 border-slate-600 hover:bg-slate-700 hover:shadow-lg transition-all duration-200 rounded-md"
             onClick={() => setQuery('')}
             disabled={isLoading}
           >

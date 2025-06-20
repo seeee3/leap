@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import SearchBar from '@/components/SearchBar';
 import SearchResults from '@/components/SearchResults';
@@ -69,16 +70,16 @@ const Index = () => {
   const hasSearched = currentQuery.length > 0;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {!hasSearched ? (
           // Landing page view
           <div className="flex flex-col items-center justify-center min-h-screen">
             <div className="text-center mb-12">
-              <h1 className="text-6xl font-bold text-gray-900 mb-4 tracking-tight">
+              <h1 className="text-6xl font-bold bg-gradient-to-r from-violet-400 via-purple-400 to-indigo-400 bg-clip-text text-transparent mb-4 tracking-tight">
                 AI Search Engine
               </h1>
-              <p className="text-xl text-gray-600">
+              <p className="text-xl text-slate-300">
                 Find what you're looking for across the web with AI
               </p>
             </div>
@@ -100,10 +101,10 @@ const Index = () => {
       </main>
 
       {/* Footer */}
-      <footer className="bg-white border-t mt-auto">
+      <footer className="bg-slate-900/50 border-t border-slate-800 mt-auto">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-center h-16">
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-slate-400">
               © 2024 AI Search Engine. Built with modern web technologies.
             </p>
           </div>
