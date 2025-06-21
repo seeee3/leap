@@ -73,10 +73,10 @@ const SearchBar = ({ onSearch, onClear, isLoading = false, query: initialQuery }
             <button
               type="button"
               onClick={handleClear}
-              className="absolute right-6 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-white transition-colors duration-200 p-1 hover:bg-slate-700/50 rounded-full"
+              className="absolute right-6 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-white transition-all duration-200 p-2 hover:bg-slate-700/50 rounded-full group"
               disabled={isLoading}
             >
-              <X className="h-4 w-4" />
+              <X className="h-5 w-5 group-hover:scale-110 transition-transform duration-200" />
             </button>
           )}
         </div>
@@ -86,7 +86,7 @@ const SearchBar = ({ onSearch, onClear, isLoading = false, query: initialQuery }
           <div className="mt-4 animate-fade-in">
             <Progress 
               value={progress} 
-              className="h-1 bg-slate-800/50 rounded-full overflow-hidden"
+              className="h-2 bg-slate-800/50 rounded-full overflow-hidden"
             />
           </div>
         )}
