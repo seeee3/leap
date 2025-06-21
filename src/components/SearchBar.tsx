@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Search, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -53,13 +54,13 @@ const SearchBar = ({ onSearch, onClear, isLoading = false, query: initialQuery }
   };
 
   return (
-    <div className="w-full max-w-3xl mx-auto animate-slide-up">
+    <div className="w-full max-w-2xl mx-auto animate-slide-up">
       <form onSubmit={handleSubmit} className="relative group">
         {/* Search Input Container */}
         <div className="relative flex items-center backdrop-blur-xl border shadow-2xl rounded-2xl transition-all duration-500 group-focus-within:shadow-2xl
                         dark:bg-slate-800/40 dark:border-slate-700/50 dark:hover:border-cyan-500/30 dark:group-focus-within:border-cyan-400/50 dark:hover:shadow-cyan-500/10 dark:group-focus-within:shadow-cyan-500/20
                         bg-white/80 border-gray-200/50 hover:border-blue-300/50 group-focus-within:border-blue-400/50 hover:shadow-blue-500/10 group-focus-within:shadow-blue-500/20">
-          <Search className="absolute left-6 top-1/2 transform -translate-y-1/2 h-5 w-5 transition-colors duration-300
+          <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 h-5 w-5 transition-colors duration-300
                              dark:text-slate-400 dark:group-focus-within:text-cyan-400
                              text-gray-500 group-focus-within:text-blue-500" />
           
@@ -68,7 +69,7 @@ const SearchBar = ({ onSearch, onClear, isLoading = false, query: initialQuery }
             value={query}
             onChange={handleInputChange}
             placeholder="Search the web..."
-            className="w-full pl-16 pr-16 py-5 text-lg bg-transparent rounded-2xl focus:outline-none transition-all duration-300
+            className="w-full pl-14 pr-14 py-4 text-lg bg-transparent rounded-2xl focus:outline-none transition-all duration-300
                        dark:text-slate-100 dark:placeholder-slate-400
                        text-gray-900 placeholder-gray-500"
             disabled={isLoading}
@@ -78,7 +79,7 @@ const SearchBar = ({ onSearch, onClear, isLoading = false, query: initialQuery }
             <button
               type="button"
               onClick={handleClear}
-              className="absolute right-6 top-1/2 transform -translate-y-1/2 transition-all duration-200 p-2 rounded-full group
+              className="absolute right-5 top-1/2 transform -translate-y-1/2 transition-all duration-200 p-2 rounded-full group
                          dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-700/50
                          text-gray-500 hover:text-gray-900 hover:bg-gray-200/50"
               disabled={isLoading}
@@ -100,7 +101,7 @@ const SearchBar = ({ onSearch, onClear, isLoading = false, query: initialQuery }
         )}
 
         {/* Search Button */}
-        <div className="flex justify-center mt-8">
+        <div className="flex justify-center mt-6">
           <Button
             type="submit"
             className="px-8 py-3 border-none rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105 focus:ring-2 focus:ring-offset-2
