@@ -1,7 +1,7 @@
-
 import React, { useState } from 'react';
 import SearchBar from '@/components/SearchBar';
 import SearchResults from '@/components/SearchResults';
+import ThemeToggle from '@/components/ThemeToggle';
 
 interface SearchResult {
   id: string;
@@ -93,16 +93,28 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-navy-900 via-slate-900 to-indigo-900 relative overflow-hidden">
+    <div className="min-h-screen relative overflow-hidden transition-all duration-500
+                    dark:bg-gradient-to-br dark:from-navy-900 dark:via-slate-900 dark:to-indigo-900
+                    bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+      
+      {/* Theme Toggle */}
+      <ThemeToggle />
+      
       {/* Enhanced gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-tr from-cyan-500/10 via-blue-500/5 to-purple-500/10"></div>
+      <div className="absolute inset-0 transition-opacity duration-500
+                      dark:bg-gradient-to-tr dark:from-cyan-500/10 dark:via-blue-500/5 dark:to-purple-500/10
+                      bg-gradient-to-tr from-blue-100/30 via-indigo-100/20 to-purple-100/30"></div>
       
       {/* Off-screen light sources */}
-      <div className="fixed top-0 right-0 w-96 h-96 bg-gradient-to-l from-cyan-400/20 via-blue-400/10 to-transparent rounded-full blur-3xl translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
-      <div className="fixed bottom-0 left-0 w-80 h-80 bg-gradient-to-r from-teal-400/15 via-cyan-400/8 to-transparent rounded-full blur-3xl -translate-x-1/2 translate-y-1/2 pointer-events-none"></div>
+      <div className="fixed top-0 right-0 w-96 h-96 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2 pointer-events-none transition-all duration-500
+                      dark:bg-gradient-to-l dark:from-cyan-400/20 dark:via-blue-400/10 dark:to-transparent
+                      bg-gradient-to-l from-blue-300/30 via-indigo-300/15 to-transparent"></div>
+      <div className="fixed bottom-0 left-0 w-80 h-80 rounded-full blur-3xl -translate-x-1/2 translate-y-1/2 pointer-events-none transition-all duration-500
+                      dark:bg-gradient-to-r dark:from-teal-400/15 dark:via-cyan-400/8 dark:to-transparent
+                      bg-gradient-to-r from-teal-300/20 via-cyan-300/10 to-transparent"></div>
       
       {/* Subtle grid pattern */}
-      <div className="fixed inset-0 opacity-[0.02]" style={{
+      <div className="fixed inset-0 opacity-[0.02] transition-opacity duration-500" style={{
         backgroundImage: `
           linear-gradient(rgba(56, 189, 248, 0.1) 1px, transparent 1px),
           linear-gradient(90deg, rgba(56, 189, 248, 0.1) 1px, transparent 1px)
@@ -116,13 +128,15 @@ const Index = () => {
           <div className="w-full max-w-4xl mx-auto">
             {/* Logo/Title */}
             <div className="text-center mb-12 animate-fade-in">
-              <h1 className="text-5xl md:text-6xl font-bold text-white mb-4 tracking-tight">
+              <h1 className="text-5xl md:text-6xl font-bold mb-4 tracking-tight transition-colors duration-500
+                             dark:text-white text-gray-900">
                 Search
-                <span className="bg-gradient-to-r from-cyan-400 to-teal-400 bg-clip-text text-transparent ml-3">
+                <span className="ml-3 bg-gradient-to-r from-cyan-400 to-teal-400 bg-clip-text text-transparent">
                   Engine
                 </span>
               </h1>
-              <p className="text-slate-400 text-lg">Find what you're looking for</p>
+              <p className="text-lg transition-colors duration-500
+                           dark:text-slate-400 text-gray-600">Find what you're looking for</p>
             </div>
 
             {/* Search Bar */}
@@ -138,23 +152,30 @@ const Index = () => {
             {/* Popular AI Topics Overlay - Only show when no search query */}
             {!query && !isLoading && results.length === 0 && (
               <div className="mb-12 animate-fade-in">
-                <h2 className="text-2xl font-semibold text-white mb-6 text-center">Popular AI Topics</h2>
+                <h2 className="text-2xl font-semibold mb-6 text-center transition-colors duration-500
+                               dark:text-white text-gray-900">Popular AI Topics</h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {popularTopics.map((topic, index) => (
                     <div
                       key={index}
                       onClick={() => handleTopicClick(topic.title)}
-                      className="group backdrop-blur-xl bg-slate-800/30 border border-slate-700/50 p-6 rounded-xl hover:border-cyan-500/50 hover:bg-slate-800/50 transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-cyan-500/20 cursor-pointer animate-slide-up"
+                      className="group backdrop-blur-xl border p-6 rounded-xl transition-all duration-300 transform hover:scale-105 cursor-pointer animate-slide-up
+                                 dark:bg-slate-800/30 dark:border-slate-700/50 dark:hover:border-cyan-500/50 dark:hover:bg-slate-800/50 dark:hover:shadow-cyan-500/20
+                                 bg-white/60 border-gray-200/50 hover:border-blue-300/50 hover:bg-white/80 hover:shadow-blue-500/10
+                                 hover:shadow-lg"
                       style={{ animationDelay: `${index * 150}ms` }}
                     >
                       <div className="text-center">
                         <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">
                           {topic.icon}
                         </div>
-                        <h3 className="text-xl font-semibold text-cyan-400 mb-2 group-hover:text-cyan-300 transition-colors">
+                        <h3 className="text-xl font-semibold mb-2 transition-colors duration-300
+                                       dark:text-cyan-400 dark:group-hover:text-cyan-300
+                                       text-blue-600 group-hover:text-blue-700">
                           {topic.title}
                         </h3>
-                        <p className="text-slate-300 text-sm leading-relaxed">
+                        <p className="text-sm leading-relaxed transition-colors duration-300
+                                      dark:text-slate-300 text-gray-600">
                           {topic.description}
                         </p>
                       </div>

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Search, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -57,15 +56,21 @@ const SearchBar = ({ onSearch, onClear, isLoading = false, query: initialQuery }
     <div className="w-full max-w-3xl mx-auto animate-slide-up">
       <form onSubmit={handleSubmit} className="relative group">
         {/* Search Input Container */}
-        <div className="relative flex items-center backdrop-blur-xl bg-slate-800/40 border border-slate-700/50 rounded-2xl shadow-2xl hover:shadow-cyan-500/10 transition-all duration-500 hover:border-cyan-500/30 group-focus-within:border-cyan-400/50 group-focus-within:shadow-cyan-500/20">
-          <Search className="absolute left-6 top-1/2 transform -translate-y-1/2 text-slate-400 h-5 w-5 group-focus-within:text-cyan-400 transition-colors duration-300" />
+        <div className="relative flex items-center backdrop-blur-xl border shadow-2xl rounded-2xl transition-all duration-500 group-focus-within:shadow-2xl
+                        dark:bg-slate-800/40 dark:border-slate-700/50 dark:hover:border-cyan-500/30 dark:group-focus-within:border-cyan-400/50 dark:hover:shadow-cyan-500/10 dark:group-focus-within:shadow-cyan-500/20
+                        bg-white/80 border-gray-200/50 hover:border-blue-300/50 group-focus-within:border-blue-400/50 hover:shadow-blue-500/10 group-focus-within:shadow-blue-500/20">
+          <Search className="absolute left-6 top-1/2 transform -translate-y-1/2 h-5 w-5 transition-colors duration-300
+                             dark:text-slate-400 dark:group-focus-within:text-cyan-400
+                             text-gray-500 group-focus-within:text-blue-500" />
           
           <input
             type="text"
             value={query}
             onChange={handleInputChange}
             placeholder="Search the web..."
-            className="w-full pl-16 pr-16 py-5 text-lg bg-transparent text-slate-100 placeholder-slate-400 rounded-2xl focus:outline-none transition-all duration-300"
+            className="w-full pl-16 pr-16 py-5 text-lg bg-transparent rounded-2xl focus:outline-none transition-all duration-300
+                       dark:text-slate-100 dark:placeholder-slate-400
+                       text-gray-900 placeholder-gray-500"
             disabled={isLoading}
           />
           
@@ -73,7 +78,9 @@ const SearchBar = ({ onSearch, onClear, isLoading = false, query: initialQuery }
             <button
               type="button"
               onClick={handleClear}
-              className="absolute right-6 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-white transition-all duration-200 p-2 hover:bg-slate-700/50 rounded-full group"
+              className="absolute right-6 top-1/2 transform -translate-y-1/2 transition-all duration-200 p-2 rounded-full group
+                         dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-700/50
+                         text-gray-500 hover:text-gray-900 hover:bg-gray-200/50"
               disabled={isLoading}
             >
               <X className="h-5 w-5 group-hover:scale-110 transition-transform duration-200" />
@@ -86,7 +93,8 @@ const SearchBar = ({ onSearch, onClear, isLoading = false, query: initialQuery }
           <div className="mt-4 animate-fade-in">
             <Progress 
               value={progress} 
-              className="h-2 bg-slate-800/50 rounded-full overflow-hidden"
+              className="h-2 rounded-full overflow-hidden transition-colors duration-500
+                         dark:bg-slate-800/50 bg-gray-200/50"
             />
           </div>
         )}
@@ -95,7 +103,10 @@ const SearchBar = ({ onSearch, onClear, isLoading = false, query: initialQuery }
         <div className="flex justify-center mt-8">
           <Button
             type="submit"
-            className="px-8 py-3 bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-500 hover:to-teal-500 text-white border-none rounded-xl shadow-lg hover:shadow-xl hover:shadow-cyan-500/25 transition-all duration-300 transform hover:scale-105 focus:ring-2 focus:ring-cyan-400/50 focus:ring-offset-2 focus:ring-offset-slate-900"
+            className="px-8 py-3 border-none rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105 focus:ring-2 focus:ring-offset-2
+                       dark:bg-gradient-to-r dark:from-cyan-600 dark:to-teal-600 dark:hover:from-cyan-500 dark:hover:to-teal-500 dark:text-white dark:hover:shadow-cyan-500/25 dark:focus:ring-cyan-400/50 dark:focus:ring-offset-slate-900
+                       bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white hover:shadow-blue-500/25 focus:ring-blue-400/50 focus:ring-offset-white
+                       hover:shadow-xl"
             disabled={isLoading || !query.trim()}
           >
             {isLoading ? (
