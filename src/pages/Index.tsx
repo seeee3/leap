@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import SearchBar from '@/components/SearchBar';
 import SearchResults from '@/components/SearchResults';
@@ -129,7 +128,7 @@ const Index = () => {
               <h1 className="text-5xl md:text-6xl font-bold mb-4 tracking-tight transition-colors duration-500
                              dark:text-white text-gray-900">
                 Search
-                <span className="ml-3 bg-gradient-to-r dark:from-cyan-400 dark:to-teal-400 from-blue-500 to-blue-700 bg-clip-text text-transparent">
+                <span className="ml-3 bg-gradient-to-r from-sky-500 to-sky-500 bg-clip-text text-transparent">
                   Engine
                 </span>
               </h1>
