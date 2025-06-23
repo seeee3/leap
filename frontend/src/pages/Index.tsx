@@ -34,50 +34,25 @@ const Index = () => {
   const handleSearch = async (searchQuery: string) => {
     setQuery(searchQuery);
     setIsLoading(true);
-    
-    // Simulate API call
-    setTimeout(() => {
-      const mockResults: SearchResult[] = [
-        {
-          id: '1',
-          title: 'React Documentation - Getting Started',
-          url: 'https://react.dev',
-          description: 'Learn React with our comprehensive documentation and tutorials. Build modern web applications with components, hooks, and more.',
-          domain: 'react.dev'
-        },
-        {
-          id: '2',
-          title: 'Tailwind CSS - Utility-First Framework',
-          url: 'https://tailwindcss.com',
-          description: 'A utility-first CSS framework packed with classes to build any design, directly in your markup.',
-          domain: 'tailwindcss.com'
-        },
-        {
-          id: '3',
-          title: 'TypeScript Handbook',
-          url: 'https://typescriptlang.org',
-          description: 'TypeScript extends JavaScript by adding types. Learn how to use TypeScript to build scalable applications.',
-          domain: 'typescriptlang.org'
-        },
-        {
-          id: '4',
-          title: 'Vite - Next Generation Frontend Tooling',
-          url: 'https://vitejs.dev',
-          description: 'Vite provides a faster and leaner development experience for modern web projects.',
-          domain: 'vitejs.dev'
-        },
-        {
-          id: '5',
-          title: 'MDN Web Docs',
-          url: 'https://developer.mozilla.org',
-          description: 'The MDN Web Docs site provides information about Open Web technologies including HTML, CSS, and APIs.',
-          domain: 'developer.mozilla.org'
-        }
-      ];
-      setResults(mockResults);
+  
+    try {
+      const response = await fetch(`http://localhost:4000/api/search?query=${encodeURIComponent(searchQuery)}`);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+  
+      // Assuming backend sends { results: SearchResult[] }
+      // You might want to map or adapt fields here if needed
+      setResults(data.results || []);
+    } catch (error) {
+      console.error('Error fetching search results:', error);
+      setResults([]);  // optionally clear results on error
+    } finally {
       setIsLoading(false);
-    }, 1500);
+    }
   };
+  
 
   const handleClear = () => {
     setQuery('');
