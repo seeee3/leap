@@ -24,9 +24,22 @@ const SearchResults = ({ results, query, isLoading }: SearchResultsProps) => {
   };
 
   const formatDescription = (desc: string) => {
-    const match = desc.match(/[A-Z][^.!?]*[.!?]*/);
-    return match ? match[0].trim() : desc;
-  };
+  if (!desc) return 'No description available';
+
+  const cleanLines = desc
+    .split('\n')
+    .filter(line => !line.includes('%'))
+    .join(' ');
+
+  const trimmed = cleanLines.trim();
+  const capitalized =
+    trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
+
+  return capitalized.length > 300
+    ? capitalized.slice(0, 297).trim() + '...'
+    : capitalized;
+};
+
 
   if (isLoading) {
     return (
