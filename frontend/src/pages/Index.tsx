@@ -1,10 +1,14 @@
+<<<<<<< HEAD
 
+=======
+>>>>>>> b2e7a5a (your message about the changes)
 import { useState, useEffect } from "react";
 import { SearchBar } from "@/components/SearchBar";
 import { TagsCluster } from "@/components/TagsCluster";
 import { ArticleCard } from "@/components/ArticleCard";
 import { AuthButtons } from "@/components/AuthButtons";
 
+<<<<<<< HEAD
 // Mock article data
 const mockArticlesBase = [{
   id: 1,
@@ -122,6 +126,47 @@ const Index = () => {
     const response = await fetch(`http://localhost:4000/api/search?query=${encodeURIComponent(searchQuery)}`);
     if (!response.ok) {
       throw new Error('Network response was not ok');
+=======
+const Index = () => {
+  const [query, setQuery] = useState("ai");
+  const [results, setResults] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectedTags, setSelectedTags] = useState<string | null>(null);
+  const [selectedSource, setSelectedSource] = useState<string | null>(null);
+  const [selectedDateRange, setSelectedDateRange] = useState<string | null>("today");
+
+  // Call this whenever search needs to run with current filters and query
+  const handleSearch = async (
+    searchQuery: string,
+    filters: { source: string | null; dateRange: string | null },
+    tags: string[] = []
+  ) => {
+    setQuery(searchQuery);
+    setIsLoading(true);
+
+    try {
+      const params = new URLSearchParams();
+      params.append("query", searchQuery);
+
+      // Append tags if any (usually empty in your case)
+      tags.forEach((tag) => params.append("tags", tag));
+
+      if (filters?.source) params.append("source", filters.source);
+      else if (selectedSource) params.append("source", selectedSource);
+
+      if (filters?.dateRange) params.append("dateRange", filters.dateRange);
+      else if (selectedDateRange) params.append("dateRange", selectedDateRange);
+
+      const response = await fetch(`http://localhost:4000/api/search?${params.toString()}`);
+      const data = await response.json();
+
+      setResults(data.results || []);
+    } catch (error) {
+      console.error("Search failed:", error);
+      setResults([]);
+    } finally {
+      setIsLoading(false);
+>>>>>>> b2e7a5a (your message about the changes)
     }
     const data = await response.json();
     setArticles(data.results || []);
@@ -152,6 +197,7 @@ const Index = () => {
     }, 1000);
   };
 
+<<<<<<< HEAD
   useEffect(() => {
     const handleScroll = () => {
       if (window.innerHeight + document.documentElement.scrollTop >= document.documentElement.offsetHeight - 1000) {
@@ -168,6 +214,35 @@ const Index = () => {
     const matchesTags = selectedTags.length === 0 || selectedTags.some(tag => article.tags.includes(tag));
     return matchesSearch && matchesTags;
   });
+=======
+  const handleTagClick = (tag: string) => {
+    // Toggle tag selection: unselect if already selected, otherwise select new tag
+    const updatedTag = selectedTags === tag ? null : tag;
+    setSelectedTags(updatedTag);
+
+    // Use tag as query, or empty if unselected
+    const searchQuery = updatedTag || "";
+
+    // Update input search bar with tag text or empty
+    setQuery(searchQuery);
+
+    // Search with tag as query, do NOT send tags param to backend to avoid duplicates
+    handleSearch(searchQuery, { source: selectedSource, dateRange: selectedDateRange }, []);
+  };
+
+  const handleFiltersChange = (filters: { source: string | null; dateRange: string | null }) => {
+    setSelectedSource(filters.source);
+    setSelectedDateRange(filters.dateRange);
+    // Run search with current query and new filters
+    handleSearch(query, filters);
+  };
+
+  useEffect(() => {
+    handleSearch("ai", { source: null, dateRange: "today" });
+    setSelectedDateRange("today");
+    setQuery("ai");
+  }, []);
+>>>>>>> b2e7a5a (your message about the changes)
 
   return <div className="min-h-screen bg-black text-white">
       {/* Header */}
@@ -181,15 +256,31 @@ const Index = () => {
         <h2 className="text-4xl md:text-5xl font-bold mb-12 max-w-4xl mx-auto leading-tight">All Your AI News - In One Place</h2>
         
         <div className="max-w-4xl mx-auto mb-8">
+<<<<<<< HEAD
           <SearchBar value={searchQuery} onChange={setSearchQuery} onSearch={handleSearch} placeholder="Search for anything" />
         </div>
  
         <TagsCluster selectedTags={selectedTags} onTagClick={handleTagClick} />
+=======
+          <SearchBar
+            value={query}
+            onChange={setQuery} // updates query state on input change (no search triggered here)
+            onSearch={handleSearch} // trigger search on enter key or button click
+            onFiltersChange={handleFiltersChange} // trigger search on filters change
+            placeholder="Search for anything"
+            isLoading={isLoading}
+          />
+        </div>
+
+        {/* Pass selectedTags as array with zero or one element */}
+        <TagsCluster selectedTags={selectedTags ? [selectedTags] : []} onTagClick={handleTagClick} />
+>>>>>>> b2e7a5a (your message about the changes)
       </section>
 
       {/* Articles Grid */}
       <section className="max-w-7xl mx-auto px-6 pb-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<<<<<<< HEAD
           {filteredArticles.map(article => <ArticleCard key={article.id} article={article} />)}
         </div>
         
@@ -199,6 +290,16 @@ const Index = () => {
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-orange-500"></div>
               Loading more articles...
             </div>
+=======
+          {results.map((article) => (
+            <ArticleCard key={article.url} article={article} />
+          ))}
+        </div>
+
+        {results.length === 0 && (
+          <div className="text-center py-16">
+            <p className="text-gray-400 text-lg">No articles found matching your criteria.</p>
+>>>>>>> b2e7a5a (your message about the changes)
           </div>
         )}
         
@@ -216,3 +317,6 @@ const Index = () => {
 };
 
 export default Index;
+
+
+

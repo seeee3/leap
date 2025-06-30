@@ -1,5 +1,4 @@
 interface Article {
-  id: number;
   thumbnail: string;
   headline: string;
   summary: string;
@@ -12,6 +11,26 @@ interface Article {
 interface ArticleCardProps {
   article: Article;
 }
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+  const now = new Date();
+
+  const isToday = date.toDateString() === now.toDateString();
+
+  const yesterday = new Date();
+  yesterday.setDate(now.getDate() - 1);
+  const isYesterday = date.toDateString() === yesterday.toDateString();
+
+  if (isToday) return "Today";
+  if (isYesterday) return "Yesterday";
+
+  return date.toLocaleDateString(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+};
+
 
 export const ArticleCard = ({ article }: ArticleCardProps) => {
   const handleClick = () => {
@@ -36,7 +55,7 @@ export const ArticleCard = ({ article }: ArticleCardProps) => {
         {/* Source and Date Overlay */}
         <div className="absolute top-2 left-2 right-2 flex items-center justify-between text-xs text-white bg-black/60 backdrop-blur-sm px-2 py-1 rounded">
           <span className="font-medium">{article.source}</span>
-          <span>{new Date(article.date).toLocaleDateString()}</span>
+          <span>{formatDate(article.date)}</span>
         </div>
       </div>
       
