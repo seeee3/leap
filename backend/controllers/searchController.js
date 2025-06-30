@@ -36,11 +36,7 @@ const search = async (req, res) => {
           headline = parsed[0] || "No Title";
         }
       } catch {
-<<<<<<< HEAD
         // leave title as-is
-=======
-        // Leave headline as-is
->>>>>>> b2e7a5a (your message about the changes)
       }
 
       return {
@@ -98,7 +94,3 @@ const search = async (req, res) => {
 };
 
 module.exports = { search };
-<<<<<<< HEAD
-=======
-
->>>>>>> b2e7a5a (your message about the changes)
