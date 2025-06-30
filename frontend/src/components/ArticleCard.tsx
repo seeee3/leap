@@ -43,14 +43,15 @@ export const ArticleCard = ({ article }: ArticleCardProps) => {
       className="border border-white/20 bg-black hover:border-white/40 transition-all duration-200 cursor-pointer group"
     >
       {/* Thumbnail with overlay */}
-      <div className="aspect-video bg-gray-800 flex items-center justify-center text-gray-400 text-sm relative">
-        <img 
-          src={`https://images.unsplash.com/${article.thumbnail}?w=400&h=225&fit=crop`}
-          alt={article.headline}
-          className="w-full h-full object-cover"
-          onError={(e) => {
-            e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIyNSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMzMzIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZpbGw9IiM5OTkiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5JbWFnZTwvdGV4dD48L3N2Zz4=';
-          }}
+      <div className="aspect-video bg-gray-800 flex items-center justify-center text-gray-400 text-sm relative rounded-xl overflow-hidden">
+  <img 
+    src={article.thumbnail} // direct URL like jpg, png, etc.
+    alt={article.headline}
+    className="w-full h-full object-cover"
+    onError={(e) => {
+      e.currentTarget.src =
+        "http://localhost:4000/fallback1.jpeg"; 
+    }}
         />
         {/* Source and Date Overlay */}
         <div className="absolute top-2 left-2 right-2 flex items-center justify-between text-xs text-white bg-black/60 backdrop-blur-sm px-2 py-1 rounded">
