@@ -1,4 +1,3 @@
-
 import { Search, Filter } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -10,9 +9,11 @@ import { Separator } from "@/components/ui/separator";
 interface SearchBarProps {
   value: string;
   onChange: (value: string) => void;
+  onSearch: (query: string) => void;
   placeholder?: string;
   isLoading?: boolean;
 }
+
 
 
 const filterOptions = {
@@ -39,31 +40,42 @@ const filterOptions = {
 export const SearchBar = ({
   value,
   onChange,
+  onSearch,
   placeholder = "Search..."
 }: SearchBarProps) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && onSearch) {
+      onSearch(value);
+    }
+  };
+
   return (
-    <div className="flex w-full max-w-4xl mx-auto gap-2">
+    <div className="flex w-full max-w-4xl mx-auto gap-3">
       <div className="relative flex-1">
         <Input 
           type="text" 
           placeholder={placeholder} 
           value={value} 
           onChange={(e) => onChange(e.target.value)} 
-          className="w-full h-14 bg-black border border-orange-500/20 text-white placeholder:text-gray-400 text-lg px-6 pr-14 focus:border-orange-500/40 focus:ring-0 rounded-r-none" 
+          onKeyDown={handleKeyDown}
+          className="w-full h-14 bg-black border border-orange-500/20 text-white placeholder:text-gray-400 text-lg px-6 pr-14 focus:border-orange-500/40 focus:ring-0" 
         />
       </div>
+
       <Button 
         variant="outline" 
-        className="h-14 bg-black border border-orange-500 text-white hover:bg-orange-500/10 hover:border-orange-400 px-6 rounded-l-none rounded-r-none flex items-center gap-2"
+        className="h-14 bg-black border border-orange-500 text-white hover:bg-orange-500/10 hover:border-orange-400 px-6 flex items-center gap-3"
+        onClick={() => onSearch?.(value)} 
       >
         <Search className="h-5 w-5" />
         Search
       </Button>
+
       <Popover>
         <PopoverTrigger asChild>
           <Button 
             variant="outline" 
-            className="h-14 bg-black border border-orange-500/20 text-white hover:bg-orange-500/10 hover:border-orange-400 px-4 flex items-center gap-2"
+            className="h-14 bg-black border border-orange-500/20 text-white hover:bg-orange-500/10 hover:border-orange-400 flex items-center gap-3"
           >
             <Filter className="h-5 w-5" />
             Filter
