@@ -5,7 +5,7 @@ import { ArticleCard } from "@/components/ArticleCard";
 import { AuthButtons } from "@/components/AuthButtons";
 
 const Index = () => {
-  const [query, setQuery] = useState("ai");
+  const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedTags, setSelectedTags] = useState<string | null>(null);
@@ -75,28 +75,27 @@ const Index = () => {
   const handleTagClick = (tag: string) => {
     const updatedTag = selectedTags === tag ? null : tag;
     setSelectedTags(updatedTag);
-
-    // Use tag as query if selected, else empty
-    const searchQuery = updatedTag || "";
-    setQuery(searchQuery);
-
-    // Run search with tag as query and no tags array needed (since tag is query)
-    fetchResults(searchQuery, { source: selectedSource, dateRange: selectedDateRange }, []);
+  
+    // Use current query state, not tag as query
+    // Because you want the query from the search bar to persist
+    fetchResults(query, { source: selectedSource, dateRange: selectedDateRange }, updatedTag ? [updatedTag] : []);
   };
-
+  
   const handleFiltersChange = (filters: { source: string | null; dateRange: string | null }) => {
     setSelectedSource(filters.source);
     setSelectedDateRange(filters.dateRange);
-
-    // Use current query and new filters to search
+  
     fetchResults(query, filters, selectedTags ? [selectedTags] : []);
   };
+  
 
   useEffect(() => {
-    handleSearch("ai", { source: null, dateRange: "today" });
+    // Fetch results for "ai" without setting query state
+    fetchResults("ai", { source: null, dateRange: "today" }, []);
     setSelectedDateRange("today");
-    setQuery("ai");
+    // Don't call setQuery here, so search bar remains empty
   }, []);
+  
 
   return (
     <div className="min-h-screen bg-black text-white">

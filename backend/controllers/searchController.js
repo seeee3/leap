@@ -54,18 +54,28 @@ const search = async (req, res) => {
       const normalizedSource = source.toLowerCase();
       const knownSources = ["github", "youtube", "marktechpost"];
     
+      console.log("🔍 Filtering by source:", normalizedSource);
+      console.log("📰 Sample article sources BEFORE filtering:", results.slice(0, 5).map(a => a.source));
+    
       if (normalizedSource === "others") {
         results = results.filter(article => {
           const src = (article.source || "").toLowerCase();
-          return !knownSources.some(known => src.includes(known));
+          const isKnown = knownSources.some(known => src.includes(known));
+    
+          console.log(`→ Checking source: ${src} | Is known: ${isKnown}`);
+          return !isKnown; // keep if it's NOT a known source
         });
       } else {
-        results = results.filter(article =>
-          (article.source || "").toLowerCase().includes(normalizedSource)
-        );
+        results = results.filter(article => {
+          const src = (article.source || "").toLowerCase();
+          const match = src.includes(normalizedSource);
+          console.log(`→ Checking source: ${src} | Matches '${normalizedSource}': ${match}`);
+          return match;
+        });
       }
-    }
     
+      console.log("✅ Filtered results count:", results.length);
+    }
     
     
 
