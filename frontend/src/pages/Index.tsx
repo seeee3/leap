@@ -63,10 +63,15 @@ const Index = () => {
     filters: { source: string | null; dateRange: string | null },
     tags: string[] = []
   ) => {
-    setQuery(searchQuery);
+    // Always fetch, even if the query hasn’t changed
     fetchResults(searchQuery, filters, tags);
+  
+    // Only update state if changed (prevents redundant renders)
+    if (query !== searchQuery) {
+      setQuery(searchQuery);
+    }
   };
-
+  
   const handleTagClick = (tag: string) => {
     const updatedTag = selectedTags === tag ? null : tag;
     setSelectedTags(updatedTag);

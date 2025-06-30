@@ -25,9 +25,9 @@ const filterOptions = {
   ],
   source: [
     { id: "youtube", label: "Youtube" },
-    { id: "website", label: "Website" },
     { id: "github", label: "Github" },
     { id: "marktechpost", label: "Marktechpost" },
+    { id: "others", label: "Others" },
   ],
 };
 
