@@ -16,19 +16,20 @@ const search = async (req, res) => {
       { headers: { 'Content-Type': 'application/json' } }
     );
 
-    const rawResults = Array.isArray(response.data) ? response.data : [];
+    console.log("Raw data from n8n:", JSON.stringify(response.data, null, 2));
+
+    const rawResults = Array.isArray(response.data?.data) ? response.data.data : [];
 
     const results = rawResults.map(item => {
       let title = item.title || 'No Title';
 
-      // Attempt to parse title if it's a JSON-stringified array
       try {
         const parsedTitle = JSON.parse(title);
         if (Array.isArray(parsedTitle)) {
           title = parsedTitle[0] || 'No Title';
         }
       } catch {
-        // Parsing failed, keep original title
+        // leave title as-is
       }
 
       return {
@@ -47,5 +48,3 @@ const search = async (req, res) => {
 };
 
 module.exports = { search };
-
-
