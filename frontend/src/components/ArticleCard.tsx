@@ -73,16 +73,17 @@ export const ArticleCard = ({ article }: ArticleCardProps) => {
         </p>
         
         {/* Tags */}
-        <div className="flex flex-wrap gap-1">
-          {article.tags.slice(0, 3).map((tag) => (
-            <span 
-              key={tag}
-              className="text-xs px-2 py-1 bg-white/10 text-orange-400 rounded"
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
+<div className="flex flex-wrap gap-1">
+  {(article.tags ?? []).slice(0, 3).map((tag) => (
+    <span 
+      key={tag}
+      className="text-xs px-2 py-1 bg-white/10 text-orange-400 rounded"
+    >
+      {tag}
+    </span>
+  ))}
+</div>
+
       </div>
     </div>
   );

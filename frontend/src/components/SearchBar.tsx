@@ -25,9 +25,8 @@ const filterOptions = {
   ],
   source: [
     { id: "youtube", label: "Youtube" },
+    { id: "website", label: "Website" },
     { id: "github", label: "Github" },
-    { id: "marktechpost", label: "Marktechpost" },
-    { id: "others", label: "Others" },
   ],
 };
 
@@ -81,8 +80,9 @@ export const SearchBar = ({
     onSearch(value, { source: selectedSource, dateRange: selectedDate });
   };
 
+  
   return (
-    <div className="flex w-full max-w-4xl mx-auto gap-2">
+    <div className="flex w-full max-w-4xl mx-auto gap-3">
       <div className="relative flex-1">
         <Input
           type="text"
@@ -93,13 +93,13 @@ export const SearchBar = ({
             onChange(e.target.value);
           }}
           onKeyDown={handleKeyDown}
-          className="w-full h-14 bg-black border border-orange-500/20 text-white placeholder:text-gray-400 text-lg px-6 pr-14 focus:border-orange-500/40 focus:ring-0 rounded-r-none"
+          className="w-full h-14 bg-black border border-orange-500/20 text-white placeholder:text-gray-400 text-lg px-6 pr-14 focus:border-orange-500/40 focus:ring-0 "
         />
       </div>
 
       <Button
         variant="outline"
-        className="h-14 bg-black border border-orange-500 text-white hover:bg-orange-500/10 hover:border-orange-400 px-6 rounded-l-none rounded-r-none flex items-center gap-2"
+        className="h-13 bg-black border border-orange-500 text-white hover:bg-orange-500/10 hover:border-orange-400 px-6  flex items-center gap-3"
         onClick={handleSearchClick}
       >
         <Search className="h-5 w-5" />
@@ -110,7 +110,7 @@ export const SearchBar = ({
         <PopoverTrigger asChild>
           <Button
             variant="outline"
-            className="h-14 bg-black border border-orange-500/20 text-white hover:bg-orange-500/10 hover:border-orange-400 px-4 flex items-center gap-2"
+            className="h-13 bg-black px-6 border border-orange-500/20 text-white hover:bg-orange-500/10 hover:border-orange-400 transition-all duration-200"
           >
             <Filter className="h-5 w-5" />
             Filter

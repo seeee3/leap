@@ -10,7 +10,7 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedTags, setSelectedTags] = useState<string | null>(null);
   const [selectedSource, setSelectedSource] = useState<string | null>(null);
-  const [selectedDateRange, setSelectedDateRange] = useState<string | null>("today");
+  const [selectedDateRange, setSelectedDateRange] = useState<string | null>(null);
 
   const cacheRef = useRef<Record<string, any>>({});
 
@@ -91,8 +91,8 @@ const Index = () => {
 
   useEffect(() => {
     // Fetch results for "ai" without setting query state
-    fetchResults("ai", { source: null, dateRange: "today" }, []);
-    setSelectedDateRange("today");
+    fetchResults("ai", { source: null, dateRange: "null" }, []);
+    
     // Don't call setQuery here, so search bar remains empty
   }, []);
   
@@ -135,6 +135,15 @@ const Index = () => {
             <ArticleCard key={article.url} article={article} />
           ))}
         </div>
+         
+        {isLoading && (
+          <div className="text-center py-8">
+            <div className="inline-flex items-center gap-2 text-gray-400">
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-orange-500"></div>
+              Loading more articles...
+            </div>
+          </div>
+        )}
 
         {results.length === 0 && (
           <div className="text-center py-16">
