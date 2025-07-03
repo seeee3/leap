@@ -5,10 +5,15 @@ const { createClient } = require("@supabase/supabase-js");
 const N8N_WEBHOOK_URL = process.env.N8N_WEBHOOK_URL;
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 
+// Format JS Date to "28 Jun 2025"
+const formatDateForDB = (date) =>
+  date.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+
+// Build Supabase-compatible filters
 const buildSupabaseFilterQuery = (tags = [], source, dateRange) => {
   const filters = {};
+  const now = new Date();
 
-  // Array column: filter using `ov.{...}` for overlap
   if (tags.length > 0) {
     filters["arr_tags"] = `ov.{${tags.join(",")}}`;
   }
@@ -18,82 +23,91 @@ const buildSupabaseFilterQuery = (tags = [], source, dateRange) => {
   }
 
   if (dateRange) {
-    const now = new Date();
     switch (dateRange) {
       case "today":
-        filters["tex_published_at"] = `eq.${now.toISOString().slice(0, 10)}`;
+        filters["tex_published_at"] = `eq.${formatDateForDB(now)}`;
         break;
+      case "yesterday": {
+        const yesterday = new Date(now);
+        yesterday.setDate(now.getDate() - 1);
+        filters["tex_published_at"] = `eq.${formatDateForDB(yesterday)}`;
+        break;
+      }
       case "this-week": {
-        const weekAgo = new Date();
+        const weekAgo = new Date(now);
         weekAgo.setDate(now.getDate() - 7);
-        filters["tex_published_at"] = `gte.${weekAgo.toISOString().slice(0, 10)}`;
+        filters["tex_published_at"] = `gte.${formatDateForDB(weekAgo)}`;
         break;
       }
       case "this-month": {
-        const monthAgo = new Date();
+        const monthAgo = new Date(now);
         monthAgo.setMonth(now.getMonth() - 1);
-        filters["tex_published_at"] = `gte.${monthAgo.toISOString().slice(0, 10)}`;
+        filters["tex_published_at"] = `gte.${formatDateForDB(monthAgo)}`;
         break;
       }
       case "this-year":
-        filters["tex_published_at"] = `gte.${now.getFullYear()}-01-01`;
+        filters["tex_published_at"] = `gte.01 Jan ${now.getFullYear()}`;
         break;
+      default:
+        filters["tex_published_at"] = `eq.${dateRange}`; // Already in correct format
     }
   }
 
   return qs.stringify(filters, { encode: false });
 };
 
-
 const search = async (req, res) => {
   let { query, tags = [], source, dateRange } = req.query;
 
-  // Make sure tags is an array
   if (typeof tags === "string") {
-    tags = tags.split(",").map(tag => tag.trim());
+    tags = tags.split(",").map((tag) => tag.trim());
   }
 
   const hasTags = tags.length > 0;
   const hasQuery = !!query;
   const hasFilters = !!source || !!dateRange;
 
-  // ✅ CASE 1 & 2: query missing, but tags or filters are present → Supabase REST GET
-if (!hasQuery && (hasTags || hasFilters)) {
-  try {
-    const filterQuery = buildSupabaseFilterQuery(tags, source, dateRange);
-    const supabaseUrl = `https://ndtvmstlibxnauyhhdyg.supabase.co/rest/v1/fact_table?${filterQuery}`;
+  // ✅ CASE 1 & 2: Supabase-based filtering
+  if (!hasQuery && (hasTags || hasFilters)) {
+    try {
+      const filterQuery = buildSupabaseFilterQuery(tags, source, dateRange);
+      const supabaseUrl = `https://ndtvmstlibxnauyhhdyg.supabase.co/rest/v1/fact_table?${filterQuery}`;
 
-    const response = await axios.get(supabaseUrl, {
-      headers: {
-        apikey: process.env.SUPABASE_SERVICE_ROLE_KEY,
-        Authorization: `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`,
-        "Content-Profile": "fct_schema",
-        "Accept-Profile": "fct_schema",
-        Accept: "application/json"
-      },
-    });
+      const response = await axios.get(supabaseUrl, {
+        headers: {
+          apikey: process.env.SUPABASE_SERVICE_ROLE_KEY,
+          Authorization: `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`,
+          "Content-Profile": "fct_schema",
+          "Accept-Profile": "fct_schema",
+          Accept: "application/json",
+        },
+      });
 
-    // Preprocess Supabase results to match frontend format
-    let results = (response.data || []).map(item => ({
-      headline: item.tex_title || "No Title",
-      summary: item.tex_description || item.tex_content || "No summary available",
-      thumbnail: item.tex_image_url || "/fallback1.jpeg",
-      source: item.chr_source_50 || "Unknown Source",
-      date: item.tex_published_at || new Date().toISOString(),
-      tags: item.arr_tags || [],
-      url: item.tex_url || item.tex_unique_id || "",
-    }));
+      const results = (response.data || []).map((item) => ({
+        headline: item.tex_title || "No Title",
+        summary: item.tex_description || item.tex_content || "No summary available",
+        thumbnail: item.tex_image_url || "/fallback1.jpeg",
+        source: (() => {
+          try {
+            const domain = new URL(item.tex_url).hostname;
+            return domain.replace("www.", "");
+          } catch {
+            return "Unknown Source";
+          }
+        })(),
+        date: item.tex_published_at || new Date().toISOString(),
+        tags: item.arr_tags || [],
+        url: item.tex_url || item.tex_unique_id || "",
+      }));
 
-    return res.json({ results }); // ✅ YOU MISSED THIS RETURN
-
-  } catch (error) {
-    console.error("⚠️ Supabase search failed:", error.response?.data || error.message || error);
-    return res.status(500).json({ error: "Supabase search failed" });
+      return res.json({ results });
+    } catch (error) {
+      console.error("⚠️ Supabase search failed:", error.response?.data || error.message || error);
+      return res.status(500).json({ error: "Supabase search failed" });
+    }
   }
-}
 
-
-  // ✅ CASE 3: query present → n8n flow
+  // ✅ CASE 3: Query present → send to n8n
   try {
     console.log("→ Sending to n8n:", { query, tags, source, dateRange });
 
@@ -103,9 +117,7 @@ if (!hasQuery && (hasTags || hasFilters)) {
       { headers: { "Content-Type": "application/json" } }
     );
 
-    const rawResults = Array.isArray(response.data) ? response.data : [];
-
-    let results = rawResults.map((item) => ({
+    let results = (Array.isArray(response.data) ? response.data : []).map((item) => ({
       headline: item.title || "No Title",
       summary: item.description || item.pageContent || "No summary available",
       thumbnail: item.image_url || "/fallback1.jpeg",
@@ -146,14 +158,16 @@ if (!hasQuery && (hasTags || hasFilters)) {
         switch (dateRange) {
           case "today":
             return articleDate.toDateString() === now.toDateString();
-          case "this-week":
+          case "this-week": {
             const weekAgo = new Date(now);
             weekAgo.setDate(now.getDate() - 7);
             return articleDate >= weekAgo;
-          case "this-month":
+          }
+          case "this-month": {
             const monthAgo = new Date(now);
             monthAgo.setMonth(now.getMonth() - 1);
             return articleDate >= monthAgo;
+          }
           case "this-year":
             return articleDate.getFullYear() === now.getFullYear();
           default:
@@ -170,3 +184,4 @@ if (!hasQuery && (hasTags || hasFilters)) {
 };
 
 module.exports = { search };
+

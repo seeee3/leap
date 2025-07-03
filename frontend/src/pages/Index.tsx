@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { SearchBar } from "@/components/SearchBar";
 import { TagsCluster } from "@/components/TagsCluster";
 import { ArticleCard } from "@/components/ArticleCard";
-import { AuthButtons } from "@/components/AuthButtons";
+
 
 const Index = () => {
   const [query, setQuery] = useState("");
@@ -11,6 +11,7 @@ const Index = () => {
   const [selectedTags, setSelectedTags] = useState<string | null>(null);
   const [selectedSource, setSelectedSource] = useState<string | null>(null);
   const [selectedDateRange, setSelectedDateRange] = useState<string | null>(null);
+  const [hasMore, setHasMore] = useState(true);
 
   const cacheRef = useRef<Record<string, any>>({});
 
@@ -49,6 +50,7 @@ const Index = () => {
 
       setResults(data.results || []);
       cacheRef.current[cacheKey] = data.results || [];
+      return data.results || [];
     } catch (error) {
       console.error("Search failed:", error);
       setResults([]);
@@ -80,6 +82,11 @@ const Index = () => {
     // Because you want the query from the search bar to persist
     fetchResults(query, { source: selectedSource, dateRange: selectedDateRange }, updatedTag ? [updatedTag] : []);
   };
+
+  const loadMoreArticles = () => {
+    if (isLoading || !hasMore) return;
+    setIsLoading(true);
+  };
   
   const handleFiltersChange = (filters: { source: string | null; dateRange: string | null }) => {
     setSelectedSource(filters.source);
@@ -90,10 +97,21 @@ const Index = () => {
   
 
   useEffect(() => {
-    // Fetch results for "ai" without setting query state
-    fetchResults("ai", { source: null, dateRange: "null" }, []);
-    
-    // Don't call setQuery here, so search bar remains empty
+    const fetchDefaultResults = async () => {
+      const tag = ["ai"];
+  
+      // Call for today
+      const todayResults = await fetchResults("", { source: null, dateRange: "today" }, tag);
+  
+      // Call for yesterday
+      const yesterdayResults = await fetchResults("", { source: null, dateRange: "yesterday" }, tag);
+  
+      // Merge and set the results
+      const combined = [...(todayResults || []), ...(yesterdayResults || [])];
+      setResults(combined);
+    };
+  
+    fetchDefaultResults();
   }, []);
   
 
@@ -102,7 +120,6 @@ const Index = () => {
       {/* Header */}
       <header className="flex justify-between items-center p-6 max-w-7xl mx-auto">
         <h1 className="font-bold text-4xl">Leap XI</h1>
-        <AuthButtons />
       </header>
 
       {/* Hero Section */}
@@ -144,12 +161,9 @@ const Index = () => {
             </div>
           </div>
         )}
+        
 
-        {results.length === 0 && (
-          <div className="text-center py-16">
-            <p className="text-gray-400 text-lg">No articles found matching your criteria.</p>
-          </div>
-        )}
+        
       </section>
     </div>
   );
