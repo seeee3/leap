@@ -3,126 +3,126 @@ import { SearchBar } from "@/components/SearchBar";
 import { TagsCluster } from "@/components/TagsCluster";
 import { ArticleCard } from "@/components/ArticleCard";
 
+const ITEMS_PER_BATCH = 20;
 
 const Index = () => {
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [results, setResults] = useState<any[]>([]);
   const [selectedTags, setSelectedTags] = useState<string | null>(null);
   const [selectedSource, setSelectedSource] = useState<string | null>(null);
   const [selectedDateRange, setSelectedDateRange] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
 
-  const cacheRef = useRef<Record<string, any>>({});
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
 
-  const buildCacheKey = (searchQuery: string, filters: { source: string | null; dateRange: string | null }, tags: string[]) => {
-    return `${searchQuery}|${filters.source ?? "null"}|${filters.dateRange ?? "null"}|${tags.join(",")}`;
-  };
-
-  // Just fetch data, do NOT set query here
   const fetchResults = async (
+    pageNum: number,
     searchQuery: string,
     filters: { source: string | null; dateRange: string | null },
     tags: string[]
   ) => {
     setIsLoading(true);
 
-    const cacheKey = buildCacheKey(searchQuery, filters, tags);
-    if (cacheRef.current[cacheKey]) {
-      setResults(cacheRef.current[cacheKey]);
-      setIsLoading(false);
-      return;
-    }
-
     try {
       const params = new URLSearchParams();
       params.append("query", searchQuery);
       tags.forEach((tag) => params.append("tags", tag));
-
-      if (filters?.source) params.append("source", filters.source);
-      else if (selectedSource) params.append("source", selectedSource);
-
-      if (filters?.dateRange) params.append("dateRange", filters.dateRange);
-      else if (selectedDateRange) params.append("dateRange", selectedDateRange);
+      if (filters.source) params.append("source", filters.source);
+      if (filters.dateRange) params.append("dateRange", filters.dateRange);
+      params.append("page", String(pageNum));
+      params.append("limit", String(ITEMS_PER_BATCH));
 
       const response = await fetch(`http://localhost:4000/api/search?${params.toString()}`);
       const data = await response.json();
 
-      setResults(data.results || []);
-      cacheRef.current[cacheKey] = data.results || [];
-      return data.results || [];
-    } catch (error) {
-      console.error("Search failed:", error);
-      setResults([]);
+      const fetched = data.results || [];
+      setResults((prev) => [...prev, ...fetched]);
+
+      const more = fetched.length === ITEMS_PER_BATCH;
+      setHasMore(more);
+    } catch (err) {
+      console.error("Fetch failed:", err);
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Wrapper that updates query and triggers fetch
   const handleSearch = (
     searchQuery: string,
     filters: { source: string | null; dateRange: string | null },
     tags: string[] = []
   ) => {
-    // Always fetch, even if the query hasn’t changed
-    fetchResults(searchQuery, filters, tags);
-  
-    // Only update state if changed (prevents redundant renders)
-    if (query !== searchQuery) {
-      setQuery(searchQuery);
-    }
+    setQuery(searchQuery);
+    setPage(1);
+    setResults([]);
+    setHasMore(true);
+    fetchResults(1, searchQuery, filters, tags);
   };
-  
+
   const handleTagClick = (tag: string) => {
     const updatedTag = selectedTags === tag ? null : tag;
     setSelectedTags(updatedTag);
-  
-    // Use current query state, not tag as query
-    // Because you want the query from the search bar to persist
-    fetchResults(query, { source: selectedSource, dateRange: selectedDateRange }, updatedTag ? [updatedTag] : []);
+    setPage(1);
+    setResults([]);
+    setHasMore(true);
+
+    fetchResults(1, query, { source: selectedSource, dateRange: selectedDateRange }, updatedTag ? [updatedTag] : []);
   };
 
-  const loadMoreArticles = () => {
-    if (isLoading || !hasMore) return;
-    setIsLoading(true);
-  };
-  
   const handleFiltersChange = (filters: { source: string | null; dateRange: string | null }) => {
     setSelectedSource(filters.source);
     setSelectedDateRange(filters.dateRange);
-  
-    fetchResults(query, filters, selectedTags ? [selectedTags] : []);
+    setPage(1);
+    setResults([]);
+    setHasMore(true);
+
+    fetchResults(1, query, filters, selectedTags ? [selectedTags] : []);
   };
-  
 
   useEffect(() => {
-    const fetchDefaultResults = async () => {
-      const tag = ["ai"];
-  
-      // Call for today
-      const todayResults = await fetchResults("", { source: null, dateRange: "today" }, tag);
-  
-      // Call for yesterday
-      const yesterdayResults = await fetchResults("", { source: null, dateRange: "yesterday" }, tag);
-  
-      // Merge and set the results
-      const combined = [...(todayResults || []), ...(yesterdayResults || [])];
-      setResults(combined);
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && hasMore && !isLoading) {
+        setPage((prev) => prev + 1);
+      }
+    });
+
+    if (sentinelRef.current) observer.observe(sentinelRef.current);
+    return () => {
+      if (sentinelRef.current) observer.unobserve(sentinelRef.current);
     };
-  
-    fetchDefaultResults();
+  }, [hasMore, isLoading]);
+
+  useEffect(() => {
+    if (page > 1) {
+      fetchResults(page, query, { source: selectedSource, dateRange: selectedDateRange }, selectedTags ? [selectedTags] : []);
+    }
+  }, [page]);
+
+  useEffect(() => {
+    fetchResults(1, "", { source: null, dateRange: "this-week" }, ["ai"]);
   }, []);
-  
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsVisible(window.scrollY > 300);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <div className="min-h-screen bg-black text-white">
-      {/* Header */}
       <header className="flex justify-between items-center p-6 max-w-7xl mx-auto">
         <h1 className="font-bold text-4xl">Leap XI</h1>
       </header>
 
-      {/* Hero Section */}
       <section className="text-center py-16 px-6">
         <h2 className="text-4xl md:text-5xl font-bold mb-12 max-w-4xl mx-auto leading-tight">
           All Your AI News - In One Place
@@ -133,11 +133,15 @@ const Index = () => {
             value={query}
             onChange={(val) => {
               setQuery(val);
-              setSelectedTags(null); // clear tag selection on manual input
+              setSelectedTags(null);
+              setSelectedSource(null);
+              setSelectedDateRange(null);
             }}
-            onSearch={(q) => handleSearch(q, { source: selectedSource, dateRange: selectedDateRange }, [])}
+            onSearch={(q) =>
+              handleSearch(q, { source: selectedSource, dateRange: selectedDateRange }, [])
+            }
             onFiltersChange={handleFiltersChange}
-            placeholder="Search for anything"
+            placeholder="Search"
             isLoading={isLoading}
           />
         </div>
@@ -145,29 +149,43 @@ const Index = () => {
         <TagsCluster selectedTags={selectedTags ? [selectedTags] : []} onTagClick={handleTagClick} />
       </section>
 
-      {/* Articles Grid */}
-      <section className="max-w-7xl mx-auto px-6 pb-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {results.map((article) => (
-            <ArticleCard key={article.url} article={article} />
-          ))}
-        </div>
-         
-        {isLoading && (
+      <section className="max-w-7xl mx-auto px-16 pb-16">
+        {results.length === 0 && isLoading ? (
           <div className="text-center py-8">
             <div className="inline-flex items-center gap-2 text-gray-400">
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-orange-500"></div>
-              Loading more articles...
+              Loading articles...
             </div>
           </div>
+        ) : results.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+            {results.map((article) => (
+              <ArticleCard key={article.url} article={article} />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-20 text-gray-400">
+            <p className="text-lg">No Articles to display.</p>
+          </div>
         )}
-        
 
-        
+        <div ref={sentinelRef} className="h-10" />
       </section>
+
+      {isVisible && (
+        <button
+          onClick={scrollToTop}
+          className="fixed bottom-4 left-4 z-50 p-3 bg-orange-500/30 text-white rounded-full shadow-lg hover:bg-orange-500 transition"
+          aria-label="Back to Top"
+        >
+          ↑
+        </button>
+      )}
     </div>
   );
 };
 
 export default Index;
+
+
 
